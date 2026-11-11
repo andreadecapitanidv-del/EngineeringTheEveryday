@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Traffic Lab — Highway v38 · Section headings</title>
+<title>Traffic Lab — Highway v43 · Dedicated Settings</title>
 <style>
 :root{--bg:#f5f7fa;--panel:#fff;--ink:#172334;--muted:#64748b;--line:#d9e2ec;--soft:#eef3f8;--blue:#222;--purple:#8064a2}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
@@ -111,6 +111,14 @@ body:not(.showControls) main>section.panel:not(.hero){display:none}
 body.showControls main{grid-template-columns:280px minmax(0,1fr)}
 body.showControls .hero{grid-column:1/-1}
 body.showControls main>section.panel:not(.hero){display:block}
+/* v43: dedicated Settings screen */
+#settingsPanel{display:none!important}
+body.settingsMode main{display:block;max-width:1100px}
+body.settingsMode .hero,body.settingsMode .maincol,body.settingsMode .posterFooter{display:none!important}
+body.settingsMode #settingsPanel{display:block!important;width:100%;max-width:900px;margin:24px auto;padding:26px 30px}
+.settingsHeader{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.settingsHeader p{margin-top:4px;font-size:13px}
+#backToSimulation{white-space:nowrap;border-color:#d8cde5;color:#4b2670}
 .maincol{gap:18px;min-width:0}
 .maincol>.panel{border-radius:20px;padding:22px 24px}
 .roadPanel{position:relative;padding-top:90px!important}
@@ -208,7 +216,7 @@ body.presentation .footer.posterFooter{padding:20px 24px;font-size:23px;gap:22px
 body.presentation .footer.posterFooter .waveMarks{font-size:38px;padding-right:22px}
 </style></head><body><main>
 <section class="panel hero"><div class="brandline"><div class="brandmark">Engineering<br>the Everyday</div><div class="labpill"><svg viewBox="0 0 24 40" role="img" aria-label="Traffic light"><rect x="2" y="1" width="20" height="38" rx="8" fill="#292631"/><circle cx="12" cy="9" r="4.1" fill="#EF4444"/><circle cx="12" cy="20" r="4.1" fill="#F5C542"/><circle cx="12" cy="31" r="4.1" fill="#22C55E"/></svg><span>Traffic Lab</span></div></div><h1>Why do traffic jams<br>appear <em>out of nowhere?</em></h1><p class="heroSub">A single braking event can create a congestion wave<br>that travels backwards through traffic.</p><div class="heroActions"><button id="presentationStart" class="primary">▶ Play simulation</button><button id="toggleControls" type="button">⚙ Controls</button><span>Highway · 1 km · single lane</span></div></section>
-<section class="panel"><h2>Traffic conditions</h2>
+<section class="panel" id="settingsPanel"><div class="settingsHeader"><div><div class="eyebrow">TRAFFIC LAB · CONFIGURATION</div><h2>Simulation settings</h2><p>Adjust the experiment parameters. Your changes will be applied when you return to the simulation.</p></div><button id="backToSimulation" type="button">← Back to simulation</button></div><h2>Traffic conditions</h2>
 <div class="control"><div class="top"><span>Experiment presets</span><output>4 starting conditions</output></div><div class="levels" id="presets"><button class="level selected" data-preset="fluid">Fluid<small>low density</small></button><button class="level" data-preset="critical">Near capacity<small>unstable flow</small></button><button class="level" data-preset="congested">Congested<small>dense traffic</small></button><button class="level" data-preset="shock">Strong shock<small>hard braking</small></button></div></div>
 <div class="control"><div class="top"><span>Braking event</span><output id="brakeLabel">Hard · 4.5 m/s²</output></div><div class="levels" data-key="brake"><button class="level" data-v="2.5">Moderate<small>−2.5 m/s²</small></button><button class="level selected" data-v="4.5">Hard<small>−4.5 m/s²</small></button><button class="level" data-v="6">Severe<small>−6.0 m/s²</small></button></div></div>
 <div class="control"><div class="top"><span>Desired speed</span><output id="speedValue">100 km/h</output></div><input class="param" id="desiredSpeed" type="range" min="80" max="120" step="5" value="100"></div>
@@ -406,7 +414,13 @@ function startPresentation(){
  presentationTimers.push(setTimeout(()=>{if(presentationActive)introduceBrake();},4800));
  presentationTimers.push(setTimeout(()=>{if(presentationActive){cancelAnimationFrame(raf);running=false;$('state').textContent='Presentation complete';}},42000));
 }
-$('toggleControls').addEventListener('click',()=>document.body.classList.toggle('showControls'));
+$('toggleControls').addEventListener('click',()=>{
+ document.body.classList.add('settingsMode');
+ document.body.classList.remove('showControls');
+});
+$('backToSimulation').addEventListener('click',()=>{
+ document.body.classList.remove('settingsMode');
+});
 $('presentationStart').addEventListener('click',startSimulationSequence);
 $('presentationExit').addEventListener('click',stopPresentation);
 })();
