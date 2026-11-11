@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Traffic Lab — Highway v38 · Section headings</title>
+<style>
+:root{--bg:#f5f7fa;--panel:#fff;--ink:#172334;--muted:#64748b;--line:#d9e2ec;--soft:#eef3f8;--blue:#222;--purple:#8064a2}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1600px;margin:auto;padding:18px;display:grid;grid-template-columns:260px minmax(0,1fr);gap:14px}
+.panel{background:var(--panel);border:1px solid #d9e2ec;border-radius:12px;padding:17px;min-width:0;box-shadow:0 3px 15px #19324d08}
+.hero{grid-column:1/-1;padding:20px 24px}.eyebrow{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#777;font-weight:750;margin-bottom:7px}
+h1{font-size:35px;line-height:1.05;letter-spacing:-1px;margin:0 0 6px}h2{font-size:17px;margin:0}p{color:var(--muted);margin:0}
+.control{margin:17px 0}.top{display:flex;justify-content:space-between;gap:8px;font-weight:650;margin-bottom:8px}.top output{color:#555;font-variant-numeric:tabular-nums}
+.levels{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}.levels[data-key="brake"]{grid-template-columns:repeat(3,minmax(0,1fr))}.level{border:1px solid var(--line);background:#f6f6f4;border-radius:9px;padding:9px 4px;color:#333;font-weight:700;font-size:12px;cursor:pointer}.level small{display:block;color:#777;font-size:10px;font-weight:450;margin-top:3px}.level.selected{background:#fff;color:#111;border-color:#222}.level.selected small{color:#ddd}
+button{border:1px solid var(--line);border-radius:9px;background:#fff;color:#171717;padding:10px 12px;font:inherit;font-weight:700;cursor:pointer}.primary{background:#fff;color:#111;border-color:#222}.actions{display:grid;grid-template-columns:1fr;gap:8px;margin-top:16px}.wide{grid-column:1/-1}.speedControl{margin-top:14px}.speedLevels{grid-template-columns:repeat(3,1fr)}.speedLevels .level{padding:8px 4px}
+.speed{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:12px}.speed span{font-size:11px;color:#666;font-weight:650}.speed button{padding:6px 9px;font-size:11px}.speed button.selected{background:#fff;color:#111;border-color:#222}
+.note{background:#f1f5f9;border-left:3px solid #777;border-radius:5px;padding:11px;font-size:11px;color:#526276;margin-top:13px}
+.maincol{display:flex;flex-direction:column;gap:13px}.head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:9px}.head span{font-size:11px;color:#777}
+canvas{width:100%;height:auto;display:block}.param{width:100%;accent-color:#555;cursor:pointer}.control{margin:13px 0}#speedPlot{max-height:320px}.scenarioRoad{display:grid;grid-template-columns:110px minmax(0,1fr);align-items:center;gap:12px;margin:16px 0}.scenarioName{font-size:12px;font-weight:750;display:flex;align-items:center;gap:8px}.scenarioName i{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none}.scenarioRoad canvas{width:100%;height:auto;display:block}.param{width:100%;accent-color:#555;cursor:pointer}.control{margin:13px 0}.roadStack{display:grid;grid-template-columns:1fr;gap:5px}.scenarioRoad{grid-template-columns:1fr;gap:2px;margin:3px 0}.scenarioName{font-size:12px}.scenarioRoad canvas{width:100%;height:auto}
+.axis{display:flex;justify-content:space-between;color:#777;font-size:10px;margin-top:4px}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.metric{background:#f1f5f9;border-radius:7px;padding:10px}.label{font-size:10px;color:#777}.value{font-size:22px;font-weight:750;margin-top:3px;font-variant-numeric:tabular-nums}.unit{font-size:10px;color:#777}
+.status{display:flex;align-items:center;gap:7px;font-weight:700;margin-top:10px}.dot{width:8px;height:8px;border-radius:50%;background:#999}.dot.run{background:#292929}
+.footer{grid-column:1/-1;text-align:center;color:#777;font-size:10px}
+@media(max-width:850px){.roadStack{grid-template-columns:1fr}main{grid-template-columns:1fr}.hero{grid-column:auto}.metrics{grid-template-columns:repeat(2,1fr)}.scenarioRoad{grid-template-columns:1fr;gap:4px}.scenarioName{font-size:13px}}
+
+.heroActions{display:flex;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap}
+.heroActions span{font-size:11px;color:#777}
+#presentationCaption{display:none}
+body.presentation{background:#111;overflow:hidden}
+body.presentation main{
+ width:min(100vw,80vh);height:auto;aspect-ratio:4/5;max-width:none;margin:0 auto;
+ padding:18px;display:grid;grid-template-columns:1fr;grid-template-rows:auto 1fr;gap:10px;
+ overflow:hidden;background:#f5f7fa;
+}
+body.presentation .hero{grid-column:auto;padding:14px 18px}
+body.presentation .hero h1{font-size:30px}
+body.presentation .hero p{font-size:11px}
+body.presentation .heroActions{display:none}
+body.presentation main>section.panel:not(.hero){display:none}
+body.presentation .maincol{min-height:0;gap:9px}
+body.presentation .maincol>.panel{padding:11px 13px;min-height:0}
+body.presentation .maincol>.panel:first-child{flex:0 0 auto}
+body.presentation .maincol>.panel:nth-child(2){flex:1;min-height:0}
+body.presentation .maincol .head{margin-bottom:5px}
+body.presentation .maincol .head h2{font-size:14px}
+body.presentation .maincol .head span{font-size:9px}
+body.presentation .scenarioRoad{margin:2px 0}
+body.presentation .scenarioName{font-size:10px}
+body.presentation .scenarioRoad canvas{width:100%;height:auto}
+body.presentation .axis{font-size:8px}
+body.presentation #speedPlot{max-height:220px}
+body.presentation .maincol>.panel:nth-child(2) .axis{font-size:8px}
+body.presentation .footer{display:none}
+body.presentation #presentationCaption{
+ display:flex;position:fixed;z-index:20;left:50%;top:6%;transform:translateX(-50%);
+ width:min(calc(100vw - 36px),calc(80vh - 36px));height:auto;min-height:110px;
+ flex-direction:column;justify-content:center;align-items:center;text-align:center;
+ pointer-events:none;padding:18px 24px;background:#171717ee;color:#fff;border-radius:12px;
+ box-shadow:0 10px 40px #0005;
+}
+body.presentation #presentationCaption .captionEyebrow{font-size:9px;letter-spacing:2px;color:#c9c9c9;font-weight:750;margin-bottom:10px}
+body.presentation #captionTitle{font-size:clamp(22px,3.2vw,38px);line-height:1.08;font-weight:800;letter-spacing:-.7px;max-width:700px;white-space:pre-line}
+body.presentation #captionSub{font-size:clamp(11px,1.3vw,15px);color:#ddd;margin-top:10px;max-width:620px}
+body.presentation #presentationExit{pointer-events:auto;position:absolute;top:8px;right:8px;font-size:10px;padding:5px 8px;background:#fff;color:#111}
+body.presentation .maincol>.panel:nth-child(2) .head span{display:none}
+@media(max-height:850px){
+ body.presentation main{padding:10px;gap:7px}
+ body.presentation .hero{padding:9px 13px}
+ body.presentation .hero h1{font-size:24px}
+ body.presentation .maincol>.panel{padding:8px 10px}
+ body.presentation #speedPlot{max-height:170px}
+}
+
+
+/* v20 refinements: readable presentation labels and cleaner vehicle spacing */
+body.presentation .hero .eyebrow{font-size:10px}
+body.presentation .hero h1{font-size:27px;letter-spacing:-.5px}
+body.presentation .hero p{font-size:12px}
+body.presentation .maincol>.panel:first-child .head h2{font-size:17px}
+body.presentation .scenarioRoad{grid-template-columns:1fr;gap:5px;margin:8px 0}
+body.presentation .scenarioName{font-size:14px;font-weight:800;letter-spacing:.1px;min-height:20px}
+body.presentation .scenarioName i{width:11px;height:11px}
+body.presentation .scenarioRoad canvas{width:100%;height:auto}
+body.presentation .maincol>.panel:first-child>.axis{font-size:10px}
+body.presentation .maincol>.panel:nth-child(2) .head h2{font-size:15px}
+body.presentation .maincol>.panel:nth-child(2) .axis{font-size:10px}
+body.presentation #speedPlot{max-height:190px}
+body.presentation #presentationCaption{top:4%;padding:20px 22px;min-height:120px}
+body.presentation #captionTitle{font-size:clamp(24px,3.5vw,40px)}
+body.presentation #captionSub{font-size:clamp(13px,1.6vw,17px)}
+@media(max-height:850px){
+ body.presentation .scenarioName{font-size:13px}
+ body.presentation .scenarioRoad{margin:5px 0}
+ body.presentation #speedPlot{max-height:150px}
+}
+
+
+/* v21 — presentation-only editorial redesign, keeping the simulation model intact */
+:root{--bg:#faf9fc;--panel:#fff;--ink:#111018;--muted:#55535e;--line:#ded9e8;--purple:#7900ef;--soft:#f2e8ff}
+body{background:#f8f7fb;color:#111018;font-family:Inter,Arial,sans-serif}
+main{width:min(100%,1100px);max-width:1100px;margin:0 auto;padding:34px 32px 28px;display:grid;grid-template-columns:1fr;gap:18px;background:#fff;box-shadow:0 0 45px #21143a0b}
+.panel{border:1px solid #e2deea;border-radius:22px;padding:22px 24px;box-shadow:0 2px 12px #24143b08}
+.hero{grid-column:auto;padding:8px 22px 18px;border:0;box-shadow:none;background:transparent}
+.brandline{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px}
+.brandmark{border-left:5px solid #7900ef;padding-left:12px;font-weight:850;font-size:20px;line-height:1.03;letter-spacing:-.6px}
+.labpill{display:inline-flex;align-items:center;gap:10px;border-radius:40px;background:transparent;border:1.5px solid #d9c5ef;color:#301050;padding:8px 17px;font-weight:750;font-size:17px}.labpill svg{display:block;width:20px;height:34px;flex:none}
+h1{font-family:Manrope,Inter,Arial,sans-serif;font-size:clamp(42px,6.4vw,70px);line-height:1.10;letter-spacing:-2.8px;font-weight:850;margin:0 0 16px;color:#111018}
+h1 em{font-style:normal;background:linear-gradient(#d9b5ff,#d9b5ff) center / 100% calc(100% - 0.38em) no-repeat;border-radius:12px;padding:0 5px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.heroSub{font-size:clamp(19px,2.4vw,27px);line-height:1.25;color:#55535e;font-weight:500}
+.heroActions{margin-top:14px}.heroActions span{color:#777}
+#toggleControls{border-color:#d8cde5;color:#4b2670}
+body:not(.showControls) main>section.panel:not(.hero){display:none}
+body.showControls main{grid-template-columns:280px minmax(0,1fr)}
+body.showControls .hero{grid-column:1/-1}
+body.showControls main>section.panel:not(.hero){display:block}
+.maincol{gap:18px;min-width:0}
+.maincol>.panel{border-radius:20px;padding:22px 24px}
+.roadPanel{position:relative;padding-top:90px!important}
+.roadPanel .head{position:absolute;top:14px;left:20px}
+.roadPanel .head span{display:none}
+.brakeCallout{position:absolute;z-index:2;top:12px;left:55%;transform:translateX(-50%);border:1.7px solid #17131d;border-radius:16px;background:#fff;padding:9px 20px;text-align:center;font-size:17px;line-height:1.05;font-weight:800;box-shadow:0 2px 8px #0000000b}
+.brakeCallout small{font-size:14px;font-weight:650}
+.roadStack{display:grid;grid-template-columns:1fr;gap:18px}
+.scenarioRoad{display:grid;grid-template-columns:190px minmax(0,1fr);align-items:center;gap:12px;margin:0}
+.scenarioName{font-size:23px;font-weight:850;line-height:1.15;border:1.5px solid #8d8994;border-radius:18px;padding:14px 16px;background:#fff;z-index:2}
+.scenarioName small{display:inline-block;font-size:16px;font-weight:600;background:#f0eef2;border-radius:12px;padding:6px 9px;margin-top:7px;white-space:nowrap}
+.scenarioName.high{border-color:#8a43c7;color:#5b16a0}.scenarioName.high small{background:#ead8ff;color:#3e146c}
+.scenarioRoad canvas{width:100%;height:auto;display:block}
+.axis{font-size:13px;color:#777}
+.plotPanel{padding:20px 22px 18px!important}
+.plotPanel .head h2,.roadPanel .head h2{font-family:Manrope,Inter,sans-serif;font-size:26px;font-weight:850;letter-spacing:-.7px}
+#speedPlot{max-height:none;width:100%;height:auto}.plotWrap{position:relative;padding-left:38px}.yAxisTitle{position:absolute;left:0;top:50%;transform:translateY(-50%) rotate(180deg);writing-mode:vertical-rl;font-size:14px;font-weight:650;color:#37323d}
+.plotPanel .axis{font-size:13px}
+.posterFooter{display:flex;align-items:center;justify-content:center;gap:36px;background:#f1e6ff;border-radius:24px;padding:26px 32px;color:#111018;font-size:34px;line-height:1.15;text-align:left}
+.posterFooter .waveMarks{font-size:52px;letter-spacing:-14px;color:#7900ef;border-right:2px solid #a67add;padding:0 34px 0 0;line-height:1}
+.posterFooter em{font-style:normal;background:#d9b5ff;border-radius:12px;padding:0 7px}
+.footer{display:block!important}
+.note{background:#f7f2fc;border-left-color:#7900ef}
+button{border-radius:12px}
+@media(max-width:760px){main{padding:18px 12px;gap:12px}.brandmark{font-size:16px}.brandline{margin-bottom:22px}h1{font-size:38px;letter-spacing:-1.5px}.heroSub{font-size:17px}.scenarioRoad{grid-template-columns:115px minmax(0,1fr);gap:6px}.scenarioName{font-size:15px;padding:9px 8px;border-radius:12px}.scenarioName small{font-size:10px;padding:4px 5px}.roadPanel{padding:72px 10px 12px!important}.brakeCallout{font-size:13px;padding:7px 12px}.brakeCallout small{font-size:11px}.posterFooter{font-size:20px;gap:18px;padding:18px 14px}.posterFooter .waveMarks{font-size:34px;padding-right:22px}.plotPanel .head h2{font-size:19px}.panel{padding:14px}}
+
+
+/* v37 — presentation-only 9:16 layout; simulation geometry and model untouched */
+body.presentation main{
+  width:min(100vw,56.25vh);
+  height:min(100vh,177.7778vw);
+  aspect-ratio:9/16;
+  padding:34px 38px 30px;
+  grid-template-rows:auto minmax(0,1fr) auto;
+  gap:24px;
+}
+body.presentation .hero{padding:14px 20px 22px}
+body.presentation .brandline{margin-bottom:26px}
+body.presentation .hero h1{font-size:clamp(42px,6.4vw,70px);line-height:1.10;margin-bottom:14px}
+body.presentation .heroSub{font-size:clamp(18px,2.2vw,25px);line-height:1.28}
+body.presentation .maincol{gap:24px;justify-content:space-between}
+body.presentation .maincol>.panel{padding:24px 26px;min-height:0}
+body.presentation .maincol>.panel:first-child{padding-top:88px!important;padding-bottom:26px}
+body.presentation .roadStack{gap:20px}
+body.presentation .scenarioRoad{margin:7px 0}
+body.presentation .scenarioName{font-size:19px;min-height:0;padding:12px 14px}
+body.presentation .scenarioName small{font-size:13px}
+body.presentation .maincol>.panel:nth-child(2){padding-top:24px;padding-bottom:24px}
+body.presentation #speedPlot{max-height:none}
+body.presentation .maincol>.panel:nth-child(2) .head{margin-bottom:12px}
+body.presentation .maincol>.panel:nth-child(2) .head h2{font-size:22px}
+body.presentation .maincol>.panel:nth-child(2) .axis{font-size:12px}
+body.presentation .footer.posterFooter{padding:28px 30px;font-size:27px;gap:28px}
+body.presentation .footer.posterFooter .waveMarks{font-size:44px;padding-right:26px}
+@media(max-height:1100px){
+ body.presentation main{padding:22px 26px 20px;gap:16px}
+ body.presentation .brandline{margin-bottom:18px}
+ body.presentation .maincol{gap:16px}
+ body.presentation .maincol>.panel{padding:17px 19px}
+ body.presentation .maincol>.panel:first-child{padding-top:78px!important}
+ body.presentation .roadStack{gap:13px}
+ body.presentation .scenarioName{font-size:16px;padding:9px 11px}
+ body.presentation .footer.posterFooter{padding:20px 22px;font-size:22px}
+}
+
+
+/* v41 — LinkedIn feed format 4:5 (1080x1350); presentation-only sizing */
+body.presentation main{
+  width:min(100vw,80vh);
+  height:min(100vh,125vw);
+  aspect-ratio:4/5;
+  max-width:none;
+  margin:0 auto;
+  padding:26px 30px 24px;
+  gap:18px;
+  grid-template-rows:auto minmax(0,1fr) auto;
+}
+body.presentation .hero{padding:12px 18px 16px}
+body.presentation .brandline{margin-bottom:18px}
+body.presentation .hero h1{font-size:clamp(36px,5.1vw,58px);line-height:1.10;margin-bottom:10px}
+body.presentation .heroSub{font-size:clamp(16px,1.9vw,21px);line-height:1.24}
+body.presentation .maincol{gap:16px;justify-content:space-between}
+body.presentation .maincol>.panel{padding:18px 20px;min-height:0}
+body.presentation .maincol>.panel:first-child{padding-top:64px!important;padding-bottom:18px}
+body.presentation .roadStack{gap:12px}
+body.presentation .scenarioRoad{margin:5px 0}
+body.presentation .scenarioName{font-size:17px;min-height:0;padding:9px 11px}
+body.presentation .scenarioName small{font-size:15px;line-height:1.2;padding:7px 10px}
+body.presentation .maincol>.panel:nth-child(2){padding-top:18px;padding-bottom:18px}
+body.presentation #speedPlot{max-height:none}
+body.presentation .maincol>.panel:nth-child(2) .head{margin-bottom:9px}
+body.presentation .maincol>.panel:nth-child(2) .head h2{font-size:20px}
+body.presentation .maincol>.panel:nth-child(2) .axis{font-size:11px}
+body.presentation .footer.posterFooter{padding:20px 24px;font-size:23px;gap:22px}
+body.presentation .footer.posterFooter .waveMarks{font-size:38px;padding-right:22px}
+</style></head><body><main>
+<section class="panel hero"><div class="brandline"><div class="brandmark">Engineering<br>the Everyday</div><div class="labpill"><svg viewBox="0 0 24 40" role="img" aria-label="Traffic light"><rect x="2" y="1" width="20" height="38" rx="8" fill="#292631"/><circle cx="12" cy="9" r="4.1" fill="#EF4444"/><circle cx="12" cy="20" r="4.1" fill="#F5C542"/><circle cx="12" cy="31" r="4.1" fill="#22C55E"/></svg><span>Traffic Lab</span></div></div><h1>Why do traffic jams<br>appear <em>out of nowhere?</em></h1><p class="heroSub">A single braking event can create a congestion wave<br>that travels backwards through traffic.</p><div class="heroActions"><button id="presentationStart" class="primary">▶ Play simulation</button><button id="toggleControls" type="button">⚙ Controls</button><span>Highway · 1 km · single lane</span></div></section>
+<section class="panel"><h2>Traffic conditions</h2>
+<div class="control"><div class="top"><span>Experiment presets</span><output>4 starting conditions</output></div><div class="levels" id="presets"><button class="level selected" data-preset="fluid">Fluid<small>low density</small></button><button class="level" data-preset="critical">Near capacity<small>unstable flow</small></button><button class="level" data-preset="congested">Congested<small>dense traffic</small></button><button class="level" data-preset="shock">Strong shock<small>hard braking</small></button></div></div>
+<div class="control"><div class="top"><span>Braking event</span><output id="brakeLabel">Hard · 4.5 m/s²</output></div><div class="levels" data-key="brake"><button class="level" data-v="2.5">Moderate<small>−2.5 m/s²</small></button><button class="level selected" data-v="4.5">Hard<small>−4.5 m/s²</small></button><button class="level" data-v="6">Severe<small>−6.0 m/s²</small></button></div></div>
+<div class="control"><div class="top"><span>Desired speed</span><output id="speedValue">100 km/h</output></div><input class="param" id="desiredSpeed" type="range" min="80" max="120" step="5" value="100"></div>
+<div class="control"><div class="top"><span>Incoming flow · Low</span><output id="flowLowValue">1,200 veh/h</output></div><input class="param" id="flowLow" type="range" min="800" max="2200" step="50" value="1200"></div>
+<div class="control"><div class="top"><span>Incoming flow · High</span><output id="flowHighValue">2,000 veh/h</output></div><input class="param" id="flowHigh" type="range" min="1000" max="2600" step="50" value="2000"></div>
+<div class="control"><div class="top"><span>Desired time headway</span><output id="headwayValue">1.2 s</output></div><input class="param" id="headway" type="range" min="0.8" max="2.0" step="0.1" value="1.2"></div>
+<div class="control"><div class="top"><span>Standstill bumper gap</span><output id="gapValue">2.0 m</output></div><input class="param" id="minGap" type="range" min="1.5" max="3.0" step="0.5" value="2"></div>
+<div class="control"><div class="top"><span>Driver response time*</span><output id="responseValue">0.6 s</output></div><input class="param" id="responseTime" type="range" min="0.2" max="1.5" step="0.1" value="0.6"></div>
+<div class="control"><div class="top"><span>Maximum acceleration</span><output id="accelValue">1.2 m/s²</output></div><input class="param" id="accel" type="range" min="0.8" max="2.0" step="0.1" value="1.2"></div>
+<div class="control"><div class="top"><span>Braking deceleration</span><output id="decelValue">4.0 m/s²</output></div><input class="param" id="decel" type="range" min="2" max="6" step="0.5" value="4"></div>
+<div class="actions"><button id="runEvent" class="primary">▶ Run braking event</button><button id="resetEvent">↺ Reset experiment</button></div>
+<div class="note"><strong>How to experiment</strong><ul style="margin:7px 0 0;padding-left:18px"><li>Change one parameter at a time.</li><li>Compare Low and High under identical driver behaviour.</li><li>Look for a slowdown that grows and travels upstream.</li></ul><div style="margin-top:6px">*Response time is represented as a first-order driver-response lag, not a full perception/reaction microsimulation.</div></div>
+<div class="control speedControl">
+  <div class="top"><span>Simulation speed</span><output id="speedLabel">4×</output></div>
+  <div class="levels speedLevels" id="speedChoices">
+    <button class="level" data-speed="1">1×</button>
+    <button class="level" data-speed="2">2×</button>
+    <button class="level selected" data-speed="4">4×</button>
+    <button class="level" data-speed="8">8×</button>
+    <button class="level" data-speed="16">16×</button>
+    <button class="level" data-speed="32">32×</button>
+  </div>
+</div>
+<div class="note"><strong>Model setup</strong><ul style="margin:7px 0 0;padding-left:18px"><li>Highway: 1 km, one lane, no overtaking.</li><li>1 km, single lane, open boundaries; vehicle length 4.5 m.</li><li>Low and High incoming flows are independently adjustable.</li><li>Car-following: Intelligent Driver Model (IDM).</li><li>Driver response is represented by a first-order lag.</li><li>At 0.50 km, one vehicle performs a progressive stop-and-go event.</li><li>Both scenarios run in parallel; playback speed is adjustable.</li></ul><div style="margin-top:6px">Educational approximation, not a calibrated driver model.</div></div>
+</section>
+<section class="maincol">
+<div class="panel roadPanel"><div class="brakeCallout">⌁ &nbsp; Braking event<br><small>(at 500 m)</small></div><div class="head"><h2>Traffic scenarios</h2><span id="state" aria-hidden="true">Ready to run</span></div>
+<div class="roadStack">
+<div class="scenarioRoad"><div class="scenarioName low"><span id="lowRoadLabel">Low Traffic<br><small>1,000 veh/h/lane</small></span></div><canvas id="road0" width="1200" height="190"></canvas></div>
+<div class="scenarioRoad"><div class="scenarioName high"><span id="highRoadLabel">High Traffic<br><small>2,000 veh/h/lane</small></span></div><canvas id="road1" width="1200" height="190"></canvas></div>
+</div><div class="axis"><span>0 m</span><span>500 m</span><span>1,000 m</span></div></div>
+<div class="panel plotPanel"><div class="head"><h2>Average speed along the road</h2><span> </span></div><div class="axis" style="justify-content:flex-start;gap:18px;margin:0 0 4px"><span style="color:#222">━ Low Traffic</span><span style="color:#7900ef">━ High Traffic</span></div><div class="plotWrap"><div class="yAxisTitle">Speed (km/h)</div><canvas id="speedPlot" width="1200" height="330"></canvas></div><div class="axis"><span>0 m · Entry</span><span>Distance along highway (m)</span><span>1,000 m · Exit</span></div></div>
+
+</section><div class="footer posterFooter"><span class="waveMarks">‹‹‹</span><strong id="footerMessage">The cars move forward.<br>The traffic jam moves <em>backwards.</em></strong></div>
+</main>
+<div id="presentationCaption" aria-live="polite"><div class="captionEyebrow">ENGINEERING THE EVERYDAY</div><div id="captionTitle"></div><div id="captionSub"></div><button id="presentationExit">Exit presentation</button></div>
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id),plot=$('speedPlot'),pc=plot.getContext('2d');
+const ROAD=1000,CAR=4.5,DT=.01,BRAKE_POINT=500,STOP_DWELL=5,BRAKE_JERK=3.0;
+const COLORS=['#222222','#8064a2'];
+const cfg={speed:100,flowLow:1200,flowHigh:2000,headway:1.2,minGap:2,response:.6,accel:1.2,decel:4,brake:4.5};
+const presets={fluid:{speed:100,flowLow:1000,flowHigh:1400,headway:1.5,minGap:2,response:.5,accel:1.2,decel:3.5,brake:3},critical:{speed:100,flowLow:1500,flowHigh:1900,headway:1.0,minGap:2,response:.8,accel:1.2,decel:4,brake:4},congested:{speed:90,flowLow:1700,flowHigh:2200,headway:.9,minGap:2,response:1.0,accel:1.2,decel:4,brake:4.5},shock:{speed:110,flowLow:1600,flowHigh:2100,headway:.9,minGap:2,response:1.0,accel:1.4,decel:5,brake:6}};
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+let playback=4,scenarios=[],time=0,running=false,raf=0,last=0,acc=0,nextId=0,sequenceElapsed=0,brakeTriggered=false;
+const controls={speed:'desiredSpeed',flowLow:'flowLow',flowHigh:'flowHigh',headway:'headway',minGap:'minGap',response:'responseTime',accel:'accel',decel:'decel'};
+function fmt(n){return Math.round(n).toLocaleString('en-US');}
+function readControls(){for(const [k,id] of Object.entries(controls))cfg[k]=Number($(id).value);}
+function renderControls(){const labels={speed:cfg.speed+' km/h',flowLow:fmt(cfg.flowLow)+' veh/h',flowHigh:fmt(cfg.flowHigh)+' veh/h',headway:cfg.headway.toFixed(1)+' s',minGap:cfg.minGap.toFixed(1)+' m',response:cfg.response.toFixed(1)+' s',accel:cfg.accel.toFixed(1)+' m/s²',decel:cfg.decel.toFixed(1)+' m/s²'};const ids={speed:'speedValue',flowLow:'flowLowValue',flowHigh:'flowHighValue',headway:'headwayValue',minGap:'gapValue',response:'responseValue',accel:'accelValue',decel:'decelValue'};for(const k in ids)$(ids[k]).textContent=labels[k];$('brakeLabel').textContent=cfg.brake.toFixed(1)+' m/s²';$('lowRoadLabel').innerHTML='Low Traffic<br><small>'+fmt(cfg.flowLow)+' veh/h/lane</small>';$('highRoadLabel').innerHTML='High Traffic<br><small>'+fmt(cfg.flowHigh)+' veh/h/lane</small>';}
+function makeScenario(flow){const v0=cfg.speed/3.6,density=flow/cfg.speed,n=Math.max(1,Math.round(density*ROAD/1000)),spacing=ROAD/n;return {flow,cars:Array.from({length:n},(_,i)=>({id:nextId++,x:(i+.5)*spacing,v:v0,a:0,brakeA:0})),brakeId:null,stopAt:null,releaseAt:null,profile:Array(101).fill(cfg.speed)};}
+function reset(){cancelAnimationFrame(raf);running=false;time=0;sequenceElapsed=0;brakeTriggered=false;last=0;acc=0;nextId=0;scenarios=[makeScenario(cfg.flowLow),makeScenario(cfg.flowHigh)];drawAll();$('state').textContent='Ready to run';}
+function start(){if(running)return;running=true;last=0;$('state').textContent='Both traffic scenarios running';raf=requestAnimationFrame(loop);}
+function triggerBrake(){if(brakeTriggered)return;scenarios.forEach((sc,index)=>{const ordered=[...sc.cars].sort((a,b)=>a.x-b.x);let target=ordered.reduce((best,c)=>!best||Math.abs(c.x-BRAKE_POINT)<Math.abs(best.x-BRAKE_POINT)?c:best,null);if(index===1&&target){const ahead=ordered.find(c=>c.x>target.x);if(ahead)target=ahead;}if(target)sc.brakeId=target.id;});brakeTriggered=true;$('state').textContent='Braking event · observing upstream response';}
+function introduceBrake(){reset();sequenceElapsed=4;triggerBrake();start();}
+function startSimulationSequence(){reset();$('state').textContent='Traffic flowing · waiting for braking event';start();}
+function loop(ts){if(!running)return;if(!last)last=ts;const real=Math.min((ts-last)/1000,.08);last=ts;sequenceElapsed+=real;if(!brakeTriggered&&sequenceElapsed>=4)triggerBrake();acc+=real*playback;let steps=0;while(acc>=DT&&steps<1200){scenarios.forEach(sc=>step(sc,DT));time+=DT;acc-=DT;steps++;}drawAll();raf=requestAnimationFrame(loop);}
+function step(sc,dt){
+ const cars=sc.cars.sort((a,b)=>a.x-b.x),states=cars.map(c=>({x:c.x,v:c.v,a:c.a||0,id:c.id}));
+ // Synchronous IDM update: every vehicle reacts to the same previous time-step state.
+ const next=cars.map((c,i)=>{const lead=states[i+1],gap=lead?lead.x-states[i].x-CAR:Infinity,v=states[i].v,v0=cfg.speed/3.6;
+   const aMax=cfg.accel,b=cfg.decel,T=cfg.headway,closing=lead?v-lead.v:0;
+   const sStar=cfg.minGap+Math.max(0,v*T+v*closing/(2*Math.sqrt(aMax*b)));
+   const free=Math.pow(v/Math.max(v0,.1),4),interaction=lead?Math.pow(sStar/Math.max(gap,.1),2):0;
+   let desired=aMax*(1-free-interaction);
+   if(c.id===sc.brakeId){if(sc.stopAt===null){c.brakeA=Math.min(cfg.brake,(c.brakeA||0)+BRAKE_JERK*dt);desired=-c.brakeA;}else if(time<sc.releaseAt)desired=0;else desired=aMax;}
+   // First-order response lag, representing finite driver/vehicle response.
+   const tau=Math.max(.05,cfg.response);const actual=states[i].a+(desired-states[i].a)*Math.min(1,dt/tau);
+   const vNext=clamp(v+actual*dt,0,v0*1.08);return {v:vNext,a:actual,x:states[i].x+(v+vNext)*.5*dt};
+ });
+ // Numerical collision guard: enforce a non-negative physical bumper gap
+ // after integration. This only activates if a time-step would create overlap.
+ for(let i=next.length-2;i>=0;i--){
+  const lead=next[i+1],follow=next[i];
+  const minCenterDistance=CAR+cfg.minGap;
+  const allowedX=lead.x-minCenterDistance;
+  if(follow.x>allowedX){
+   follow.x=allowedX;
+   // Keep the follower's state consistent with the constrained position.
+   follow.v=Math.min(follow.v,lead.v);
+   follow.a=Math.min(follow.a,lead.a);
+  }
+ }
+ cars.forEach((c,i)=>{c.x=next[i].x;c.v=next[i].v;c.a=next[i].a;});
+ const target=cars.find(c=>c.id===sc.brakeId);if(target&&target.v<=.03&&sc.stopAt===null){target.v=0;target.a=0;sc.stopAt=time;sc.releaseAt=time+STOP_DWELL;}if(target&&sc.stopAt!==null&&time>=sc.releaseAt){sc.brakeId=null;sc.stopAt=null;sc.releaseAt=null;}
+ sc.cars=cars.filter(c=>c.x<ROAD+CAR);
+ const v0=cfg.speed/3.6,spacing=v0/(sc.flow/3600);const first=sc.cars[0];if(!first||first.x>spacing){sc.cars.unshift({id:nextId++,x:0,v:v0,a:0,brakeA:0});}
+}
+function calcProfile(sc){
+ const bins=Array.from({length:ROAD+1},()=>({sum:0,count:0}));
+ // Sample the local traffic-speed profile at every metre using a ±50 m window.
+ sc.cars.forEach(c=>{
+  const lo=Math.max(0,Math.ceil(c.x-50)),hi=Math.min(ROAD,Math.floor(c.x+50));
+  for(let m=lo;m<=hi;m++){bins[m].sum+=c.v*3.6;bins[m].count++;}
+ });
+ const raw=bins.map(b=>b.count?b.sum/b.count:null);
+ // Interpolate only where the local window contains no vehicles.
+ let last=-1;
+ for(let i=0;i<raw.length;i++)if(raw[i]!==null){
+  if(last>=0&&i-last>1){const a=raw[last],b=raw[i],span=i-last;for(let j=last+1;j<i;j++)raw[j]=a+(b-a)*(j-last)/span;}
+  last=i;
+ }
+ if(last>=0){for(let i=0;i<last;i++)if(raw[i]===null)raw[i]=raw[last];for(let i=last+1;i<raw.length;i++)if(raw[i]===null)raw[i]=raw[last];}
+ return raw.map(v=>v===null?cfg.speed:v);
+}
+function drawRoad(sc,i){
+ const canvas=$('road'+i),ctx=canvas.getContext('2d'),w=canvas.width,h=canvas.height,x0=8,x1=w-8,y=h/2;
+ ctx.clearRect(0,0,w,h);
+ // Light asphalt lane, white shoulder lines and dashed centre marking.
+ ctx.fillStyle='#a5a5a8';ctx.fillRect(x0,y-48,x1-x0,96);
+ ctx.fillStyle='#f7f7f7';ctx.fillRect(x0,y-48,x1-x0,4);ctx.fillRect(x0,y+44,x1-x0,4);
+ ctx.strokeStyle='#fff';ctx.lineWidth=3;ctx.setLineDash([34,28]);ctx.beginPath();ctx.moveTo(x0,y);ctx.lineTo(x1,y);ctx.stroke();ctx.setLineDash([]);
+ const bx=x0+BRAKE_POINT/ROAD*(x1-x0);ctx.strokeStyle='#4c4651';ctx.lineWidth=2;ctx.setLineDash([8,7]);ctx.beginPath();ctx.moveTo(bx,0);ctx.lineTo(bx,h);ctx.stroke();ctx.setLineDash([]);
+ sc.cars.forEach(c=>{
+  const x=x0+c.x/ROAD*(x1-x0),active=c.id===sc.brakeId,purple=i===1;
+  ctx.save();ctx.translate(x,y);
+  const L=30,W=16,body=purple?'#5d2390':'#303034',glass=purple?'#d9c6ed':'#cbd0d1';
+  // fixed-size top-down vehicle icon; graphic dimensions never depend on spacing
+  ctx.shadowColor='#17131d44';ctx.shadowBlur=5;ctx.shadowOffsetY=2;
+  ctx.fillStyle=body;ctx.beginPath();ctx.roundRect(-L/2,-W/2,L,W,7);ctx.fill();ctx.shadowColor='transparent';
+  // bonnet and cabin silhouette
+  ctx.fillStyle=purple?'#8749b8':'#46484b';ctx.beginPath();ctx.moveTo(L*.10,-W*.40);ctx.quadraticCurveTo(L*.43,-W*.38,L*.46,0);ctx.quadraticCurveTo(L*.43,W*.38,L*.10,W*.40);ctx.closePath();ctx.fill();
+  ctx.fillStyle=glass;ctx.beginPath();ctx.roundRect(-L*.17,-W*.34,L*.43,W*.68,5);ctx.fill();
+  ctx.fillStyle=purple?'#8e62b2':'#73797c';ctx.fillRect(-L*.04,-W*.31,3,W*.62);
+  // wheels
+  ctx.fillStyle='#202024';for(const yy of [-1,1]){ctx.beginPath();ctx.roundRect(-L*.29,yy*W*.36,9,4,2);ctx.fill();ctx.beginPath();ctx.roundRect(L*.16,yy*W*.36,9,4,2);ctx.fill();}
+  // headlights / tail lights — the braking vehicle gets unmistakably bright stop lights
+  ctx.fillStyle='#fff3d2';ctx.fillRect(L*.40,-W*.31,3,5);ctx.fillRect(L*.40,W*.10,3,5);
+  if(active){
+   ctx.save();ctx.shadowColor='#ff1f35';ctx.shadowBlur=16;ctx.fillStyle='#ff1738';
+   ctx.fillRect(-L*.50,-W*.34,5,6);ctx.fillRect(-L*.50,W*.10,5,6);
+   ctx.shadowBlur=5;ctx.fillStyle='#fff0f2';
+   ctx.fillRect(-L*.50,-W*.34,2,6);ctx.fillRect(-L*.50,W*.10,2,6);ctx.restore();
+  }else{
+   ctx.fillStyle='#b54c4c';ctx.fillRect(-L*.49,-W*.31,3,5);ctx.fillRect(-L*.49,W*.10,3,5);
+  }
+  ctx.restore();
+ });
+}
+function drawPlot(){
+ const w=plot.width,h=plot.height,p={l:58,r:58,t:22,b:48},pw=w-p.l-p.r,ph=h-p.t-p.b;
+ pc.clearRect(0,0,w,h);pc.font='18px Inter,Arial';pc.strokeStyle='#e8e5eb';pc.fillStyle='#34313a';pc.lineWidth=1;
+ const vmax=120;
+ for(let i=0;i<=6;i++){const val=i*20,y=p.t+ph-(val/vmax)*ph;pc.beginPath();pc.moveTo(p.l,y);pc.lineTo(w-p.r,y);pc.stroke();pc.textAlign='right';pc.fillText(String(val),p.l-12,y+6);}
+ scenarios.forEach((sc,i)=>{sc.profile=calcProfile(sc);pc.beginPath();sc.profile.forEach((v,m)=>{const x=p.l+(m/ROAD)*pw,y=p.t+ph-(clamp(v,0,vmax)/vmax)*ph;if(m===0)pc.moveTo(x,y);else pc.lineTo(x,y);});pc.strokeStyle=COLORS[i]=== '#8064a2'?'#7900ef':'#17151d';pc.lineWidth=4;pc.lineJoin='round';pc.lineCap='round';pc.stroke();});
+ pc.strokeStyle='#8c8791';pc.fillStyle='#34313a';pc.lineWidth=1.5;pc.textAlign='center';[0,200,400,600,800,1000].forEach(m=>{const x=p.l+(m/ROAD)*pw;pc.beginPath();pc.moveTo(x,p.t+ph);pc.lineTo(x,p.t+ph+7);pc.stroke();pc.fillText(m.toLocaleString('en-US'),x,h-17);});
+ const bx=p.l+BRAKE_POINT/ROAD*pw;pc.strokeStyle='#8c8791';pc.lineWidth=2;pc.setLineDash([9,8]);pc.beginPath();pc.moveTo(bx,p.t);pc.lineTo(bx,p.t+ph);pc.stroke();pc.setLineDash([]);
+}
+function updateFooterMessage(){
+ const el=$('footerMessage'); if(!el)return;
+ if(!running && sequenceElapsed===0){el.innerHTML='The cars move forward.<br>The traffic jam moves <em>backwards.</em>';return;}
+ if(sequenceElapsed<4) el.innerHTML='Both scenarios are flowing smoothly.<br><em>Same road. Different traffic density.</em>';
+ else if(sequenceElapsed<14) el.innerHTML='A driver hits the brakes in both scenarios.<br><em>Watch how traffic density changes the response.</em>';
+ else el.innerHTML='In high traffic, the slowdown starts travelling backwards.<br><em>In low traffic, the disturbance quickly fades.</em>';
+}
+function drawAll(){scenarios.forEach(drawRoad);drawPlot();updateFooterMessage();}
+function setPreset(name){Object.assign(cfg,presets[name]);for(const [k,id] of Object.entries(controls))$(id).value=cfg[k];cfg.brake=presets[name].brake;document.querySelectorAll('[data-preset]').forEach(b=>b.classList.toggle('selected',b.dataset.preset===name));document.querySelectorAll('[data-key="brake"] button').forEach(b=>b.classList.toggle('selected',Number(b.dataset.v)===cfg.brake));renderControls();reset();}
+Object.entries(controls).forEach(([k,id])=>$(id).addEventListener('input',()=>{cfg[k]=Number($(id).value);document.querySelectorAll('[data-preset]').forEach(b=>b.classList.remove('selected'));renderControls();reset();}));
+document.querySelectorAll('[data-key="brake"] button').forEach(b=>b.addEventListener('click',()=>{cfg.brake=Number(b.dataset.v);document.querySelectorAll('[data-key="brake"] button').forEach(x=>x.classList.toggle('selected',x===b));renderControls();}));
+document.querySelectorAll('[data-preset]').forEach(b=>b.addEventListener('click',()=>setPreset(b.dataset.preset)));
+$('runEvent').addEventListener('click',introduceBrake);$('resetEvent').addEventListener('click',reset);
+document.querySelectorAll('[data-speed]').forEach(b=>b.addEventListener('click',()=>{playback=Number(b.dataset.speed);document.querySelectorAll('[data-speed]').forEach(x=>x.classList.toggle('selected',x===b));$('speedLabel').textContent=playback+'×';}));
+
+renderControls();reset();
+
+// Presentation mode: a timed, repeatable 4:5 story using the live simulation.
+let presentationTimers=[],presentationActive=false;
+const caption=$('presentationCaption'),captionTitle=$('captionTitle'),captionSub=$('captionSub');
+function clearPresentationTimers(){presentationTimers.forEach(clearTimeout);presentationTimers=[];}
+function showCaption(title,sub=''){captionTitle.textContent=title;captionSub.textContent=sub;caption.style.display='';}
+function scheduleCaption(ms,title,sub=''){presentationTimers.push(setTimeout(()=>showCaption(title,sub),ms));}
+function stopPresentation(){
+ clearPresentationTimers();presentationActive=false;document.body.classList.remove('presentation');
+ caption.style.display='none';cancelAnimationFrame(raf);running=false;
+ $('state').textContent='Presentation stopped';reset();renderControls();
+}
+function startPresentation(){
+ clearPresentationTimers();cancelAnimationFrame(raf);running=false;presentationActive=true;
+ document.body.classList.add('presentation');
+ // A controlled comparison: only incoming flow differs between the two lanes.
+ setPreset('critical');
+ $('lowRoadLabel').textContent='LOW TRAFFIC  ·  '+fmt(cfg.flowLow)+' veh/h/lane';
+ $('highRoadLabel').textContent='HIGH TRAFFIC  ·  '+fmt(cfg.flowHigh)+' veh/h/lane';
+ playback=16;
+ document.querySelectorAll('[data-speed]').forEach(b=>b.classList.toggle('selected',Number(b.dataset.speed)===playback));
+ $('speedLabel').textContent=playback+'×';
+ reset();
+ showCaption('WHY DO TRAFFIC JAMS\\nAPPEAR OUT OF NOWHERE?','A small disturbance can create a surprisingly large effect.');
+ scheduleCaption(4800,'TWO TRAFFIC CONDITIONS.','LOW: '+fmt(cfg.flowLow)+' veh/h/lane  ·  HIGH: '+fmt(cfg.flowHigh)+' veh/h/lane');
+ scheduleCaption(9200,'ONE DRIVER BRAKES AT 500 m.','No crash. No roadworks. Just a braking event.');
+ scheduleCaption(13500,'THE DISTURBANCE PROPAGATES.','Vehicles behind react, and the slowdown can amplify.');
+ scheduleCaption(22000,'THE QUEUE MOVES BACKWARDS.','While every car continues moving forwards.');
+ scheduleCaption(30000,'NO ACCIDENT REQUIRED.','This is a traffic shockwave — a collective effect of individual driving decisions.');
+ // Start the experiment after the opening card has introduced the question.
+ presentationTimers.push(setTimeout(()=>{if(presentationActive)introduceBrake();},4800));
+ presentationTimers.push(setTimeout(()=>{if(presentationActive){cancelAnimationFrame(raf);running=false;$('state').textContent='Presentation complete';}},42000));
+}
+$('toggleControls').addEventListener('click',()=>document.body.classList.toggle('showControls'));
+$('presentationStart').addEventListener('click',startSimulationSequence);
+$('presentationExit').addEventListener('click',stopPresentation);
+})();
+</script></body></html>
