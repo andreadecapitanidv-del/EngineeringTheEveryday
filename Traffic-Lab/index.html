@@ -214,7 +214,13 @@ body.presentation .maincol>.panel:nth-child(2) .head h2{font-size:20px}
 body.presentation .maincol>.panel:nth-child(2) .axis{font-size:11px}
 body.presentation .footer.posterFooter{padding:20px 24px;font-size:23px;gap:22px}
 body.presentation .footer.posterFooter .waveMarks{font-size:38px;padding-right:22px}
-</style></head><body><main>
+</style><script async src="https://www.googletagmanager.com/gtag/js?id=G-J3GYVJQKMM"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-J3GYVJQKMM');
+</script></head><body><main>
 <section class="panel hero"><div class="brandline"><div class="brandmark">Engineering<br>the Everyday</div><div class="labpill"><svg viewBox="0 0 24 40" role="img" aria-label="Traffic light"><rect x="2" y="1" width="20" height="38" rx="8" fill="#292631"/><circle cx="12" cy="9" r="4.1" fill="#EF4444"/><circle cx="12" cy="20" r="4.1" fill="#F5C542"/><circle cx="12" cy="31" r="4.1" fill="#22C55E"/></svg><span>Traffic Lab</span></div></div><h1>Why do traffic jams<br>appear <em>out of nowhere?</em></h1><p class="heroSub">A single braking event can create a congestion wave<br>that travels backwards through traffic.</p><div class="heroActions"><button id="presentationStart" class="primary">▶ Play simulation</button><button id="toggleControls" type="button">⚙ Controls</button><span>Highway · 1 km · single lane</span></div></section>
 <section class="panel" id="settingsPanel"><div class="settingsHeader"><div><div class="eyebrow">TRAFFIC LAB · CONFIGURATION</div><h2>Simulation settings</h2><p>Adjust the experiment parameters. Your changes will be applied when you return to the simulation.</p></div><button id="backToSimulation" type="button">← Back to simulation</button></div><h2>Traffic conditions</h2>
 <div class="control"><div class="top"><span>Experiment presets</span><output>4 starting conditions</output></div><div class="levels" id="presets"><button class="level selected" data-preset="fluid">Fluid<small>low density</small></button><button class="level" data-preset="critical">Near capacity<small>unstable flow</small></button><button class="level" data-preset="congested">Congested<small>dense traffic</small></button><button class="level" data-preset="shock">Strong shock<small>hard braking</small></button></div></div>
